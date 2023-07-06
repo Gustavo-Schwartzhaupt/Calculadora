@@ -6,37 +6,42 @@ body {
     text-align: center;
   }
   
-  .ac button[data-category="operation"] {
-    background-color: #A0A0A0;
+  button{
+    border-radius: 50%;
     color: white;
     width: 68px; 
     height: 68px;
-    border-radius: 50%;
     border: 1px solid black;
     font-size: 1.5rem;
+  }
+  
+  .ac{
+    margin-left: -8px;
+    margin-right: -16px;
+  }
+
+  .ac button[data-category="operation"] {
+    background-color: #A0A0A0;
     margin: 12.5px 9px;
     padding: 0;
   }
 
-  .ac button[data-category="operation"]:first-child {
-   margin-left: -8px;
-  }
- 
   .ac button[data-category="operation"]:last-child {
-    margin-right: -16px;
     margin-left: 28px;
     background-color: #F69906;
    }
  
-
   div.botoes{
     margin: 0;
     padding: 0;
   }
+
   .botoes{
     width: 290px;
     display: inline-block;
   }
+ 
+
   .botoes-operacoes{
     width: 100px;
     display: inline-block;
@@ -44,23 +49,18 @@ body {
 
   .total-area-calculator{
     background-color: black;
+    border-radius: 10px;
    
   }
 
   .area-button {
     width: 100%;
     text-align: center;
-    display: inline-block;
   }
   
   .botoes button[data-category="number"] {
     background-color: #313131;
-    color: white;
-    width: 68px; 
-    height: 68px;
-    border-radius: 50%;
-    border: 1px solid black;
-    font-size: 1.5rem;
+    width: 68px; /* Pq se tirar isso fode todos os botoes numericos se os botoes já deveriam ter essa proriedade?*/
     margin: 12.5px 9px;
     padding: 0;
     
@@ -68,14 +68,13 @@ body {
   
   .botoes-operacoes button[data-category="operation"] {
     background-color: #F69906;
-    color: white;
-    width: 68px; 
-    height: 68px;
-    border-radius: 50%;
-    border: 1px solid black;
-    font-size: 1.5rem;
     margin: 12.5px 9px 12.5px 0px;
     padding: 0;
+  }
+
+  .botoes button[data-number="0"]{
+    width: 154px;
+    border-radius: 34px;
   }
 
 ul{
@@ -93,11 +92,11 @@ ul{
   overflow-x: auto;
   }
 
-  button.botoes {
+  button {
     transition: transform 0.2s;
   }
   
-  button.botoes:active {
+  button:active {
     transform: scale(0.9);
   }
 

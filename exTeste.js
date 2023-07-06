@@ -32,6 +32,14 @@ class Calculadora {
     this.botoesNumericos = [];
     this.botoesOperacoes = [];
   }
+  criarElementoEspecial = (action) => {
+    const btnEspecial = document.createElement("button");
+    btnEspecial.setAttribute("data-category", "operation");
+    btnEspecial.textContent = action;
+
+    this.botoesOperacoes.push(btnEspecial);
+    return btnEspecial;
+  };
 
   criarElementoOperacao = (operacao) => {
     const btnOperacao = document.createElement("button");
@@ -58,10 +66,10 @@ class Calculadora {
 
     let acdiv = document.createElement("div");
     acdiv.classList.add("ac");
-    acdiv.appendChild(this.criarElementoOperacao("AC"));
-    acdiv.appendChild(this.criarElementoOperacao("+/-"));
-    acdiv.appendChild(this.criarElementoOperacao("%"));
-    acdiv.appendChild(this.criarElementoOperacao("/"));
+    acdiv.appendChild(this.criarElementoEspecial("AC"));
+    acdiv.appendChild(this.criarElementoEspecial("+/-"));
+    acdiv.appendChild(this.criarElementoEspecial("%"));
+    acdiv.appendChild(this.criarElementoEspecial("/"));
 
     div2.appendChild(this.criarElementoOperacao("*"));
     div2.appendChild(this.criarElementoOperacao("-"));
@@ -160,7 +168,6 @@ class Calculadora {
     this.botoesOperacoes.forEach((button) =>
       button.addEventListener("click", (event) => {
         const buttonThatGotClicked = event.currentTarget;
-        let temporaryVariable = buttonThatGotClicked.textContent;
         this.aoClicarBotaoOperacao(buttonThatGotClicked.textContent);
       })
     );
