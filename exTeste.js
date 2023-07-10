@@ -1,4 +1,4 @@
-function criarBotoes(num) {
+function criarBotoesNumericos() {
   let botoesNumericos = [];
   for (let i = 9; i >= 0; i--) {
     let button = document.createElement("button");
@@ -31,13 +31,14 @@ class Calculadora {
     this.displayCalc = "";
     this.botoesNumericos = [];
     this.botoesOperacoes = [];
+    this.botoesEspeciais = [];
   }
   criarElementoEspecial = (action) => {
     const btnEspecial = document.createElement("button");
     btnEspecial.setAttribute("data-category", "operation");
     btnEspecial.textContent = action;
 
-    this.botoesOperacoes.push(btnEspecial);
+    this.botoesEspeciais.push(btnEspecial);
     return btnEspecial;
   };
 
@@ -58,7 +59,7 @@ class Calculadora {
 
     let div = document.createElement("div");
     div.classList.add("botoes");
-    this.botoesNumericos = criarBotoes(10);
+    this.botoesNumericos = criarBotoesNumericos(10);
     this.botoesNumericos.forEach((botao) => div.appendChild(botao));
 
     let div2 = document.createElement("div");
@@ -76,7 +77,6 @@ class Calculadora {
     div2.appendChild(this.criarElementoOperacao("+"));
     div2.appendChild(this.criarElementoOperacao("="));
 
-    // document.body.appendChild(div);
     let areaButton = document.querySelector(".area-button");
     areaButton.appendChild(acdiv);
     areaButton.appendChild(div);
@@ -88,17 +88,29 @@ class Calculadora {
     this.atualizarUI(this.displayCalc);
   };
 
-  aoClicarBotaoOperacao = (operacao) => {
-    if (operacao === "AC") {
+  aoClicarBotaoEspecial = (valor) => {
+    if (valor === "AC") {
+      this.atualizarUI("0"); // aqui só atualiza
       this.numero1 = "";
-      this.numero2 = "";
-      this.displayCalc = "0";
-      this.operador = "";
-      this.atualizarUI(this.displayCalc); // aqui só atualiza
-      this.displayCalc = "";
+      this.zerarGlobais();
+      console.log("testando dentro do AC");
+      return;
+    } else if (valor === "=" || valor === "Enter") {
+      if (this.numero1 !== "" && this.numero2 !== "" && this.operador !== "") {
+        this.displayCalc = executarCalculo(
+          this.numero1,
+          this.numero2,
+          this.operador
+        );
+        this.numero1 = this.displayCalc;
+        this.zerarGlobais();
+      }
+      valor = "";
       return;
     }
+  };
 
+  aoClicarBotaoOperacao = (operacao) => {
     if (this.numero1 === "" && this.operador === "") {
       this.numero1 = parseInt(this.displayCalc, 10);
       this.operador = operacao;
@@ -115,43 +127,18 @@ class Calculadora {
       this.displayCalc = "";
     } else if (this.numero2 === "" && this.displayCalc !== "") {
       this.numero2 = parseInt(this.displayCalc, 10);
-      if (operacao === "=" || operacao === "Enter") {
-        if (
-          this.numero1 !== "" &&
-          this.numero2 !== "" &&
-          this.operador !== ""
-        ) {
-          this.displayCalc = executarCalculo(
-            this.numero1,
-            this.numero2,
-            this.operador
-          );
-          this.operador = "";
-          this.atualizarUI(this.displayCalc);
-          this.numero1 = this.displayCalc;
-          this.displayCalc = "";
-          this.numero2 = "";
-        }
-        operacao = "";
-      } else {
-        if (
-          this.numero1 !== "" &&
-          this.numero2 !== "" &&
-          this.operador !== ""
-        ) {
-          this.displayCalc = executarCalculo(
-            this.numero1,
-            this.numero2,
-            this.operador
-          );
-          this.operador = "";
-          this.atualizarUI(this.displayCalc);
-          this.numero1 = this.displayCalc;
-          this.displayCalc = "";
-          this.numero2 = "";
-        }
-        this.operador = operacao;
+      if (this.numero1 !== "" && this.numero2 !== "" && this.operador !== "") {
+        this.displayCalc = executarCalculo(
+          this.numero1,
+          this.numero2,
+          this.operador
+        );
+
+        this.atualizarUI(this.displayCalc);
+        this.numero1 = this.displayCalc;
+        this.zerarGlobais();
       }
+      this.operador = operacao;
     }
     this.operador = operacao;
   };
@@ -172,21 +159,36 @@ class Calculadora {
       })
     );
 
+    this.botoesEspeciais.forEach((button) =>
+      button.addEventListener("click", (event) => {
+        const buttonThatGotClicked = event.currentTarget;
+        this.aoClicarBotaoEspecial(buttonThatGotClicked.textContent);
+      })
+    );
+
     // EVENTO: LER NUMEROS DO TECLADO
     document.addEventListener("keydown", (ev) => {
       let digitRegex = /^[0-9]$/;
-      let operationRegex = /^[-+*/=]$/;
+      let operationRegex = /^[-+*]$/;
+      let especialRegex = /[/=]/;
       console.log(ev.key);
       if (digitRegex.test(ev.key)) {
         this.aoClicarBotaoNumeric(ev.key); // NOVO JEITO DO DECO
-      } else if (operationRegex.test(ev.key) || ev.key === "Enter") {
+      } else if (operationRegex.test(ev.key)) {
         this.aoClicarBotaoOperacao(ev.key);
+      } else if (especialRegex.test(ev.key) || ev.key === "Enter") {
+        this.aoClicarBotaoEspecial(ev.key);
       }
     });
   };
+  zerarGlobais = () => {
+    this.operador = "";
+    this.displayCalc = "";
+    this.numero2 = "";
+  };
 
-  atualizarUI = (displayCalc) => {
-    this.par.textContent = displayCalc;
+  atualizarUI = (valor) => {
+    this.par.textContent = valor;
   };
 
   inicializar = () => {
@@ -198,4 +200,3 @@ class Calculadora {
 
 const calculadora1 = new Calculadora();
 calculadora1.inicializar();
-console.log(window.devicePixelRatio);
