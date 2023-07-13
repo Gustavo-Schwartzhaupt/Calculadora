@@ -11,17 +11,28 @@ function criarBotoesNumericos() {
   return botoesNumericos;
 }
 
-function executarCalculo(valor1, valor2, operacao) {
-  if (operacao === "+") {
-    return valor1 + valor2;
-  } else if (operacao === "-") {
-    return valor1 - valor2;
-  } else if (operacao === "*") {
-    return valor1 * valor2;
-  } else if (operacao === "/") {
-    return valor1 / valor2;
-  }
+const operacoes = {
+  "+": (number1, number2) => number1 + number2,
+  "-": (number1, number2) => number1 - number2,
+  "*": (number1, number2) => number1 * number2,
+  "/": (number1, number2) => number1 / number2,
+};
+
+function calculate(number1, number2, operacao) {
+  return operacoes[operacao](number1, number2);
 }
+
+// function executarCalculo(valor1, valor2, operacao) {
+//   if (operacao === "+") {
+//     return valor1 + valor2;
+//   } else if (operacao === "-") {
+//     return valor1 - valor2;
+//   } else if (operacao === "*") {
+//     return valor1 * valor2;
+//   } else if (operacao === "/") {
+//     return valor1 / valor2;
+//   }
+// }
 
 class Calculadora {
   constructor() {
@@ -52,8 +63,8 @@ class Calculadora {
   };
 
   renderizarElementos = () => {
-    let resultados = document.getElementById("resultados"); // pega a linha criada no HTML e atribui a resultados
-    let par = document.createElement("p"); // ali dentro cria um parágrafo chamado par
+    let resultados = document.getElementById("resultados");
+    let par = document.createElement("p");
     resultados.appendChild(par);
     this.par = par;
 
@@ -97,11 +108,7 @@ class Calculadora {
       return;
     } else if (valor === "=" || valor === "Enter") {
       if (this.numero1 !== "" && this.numero2 !== "" && this.operador !== "") {
-        this.displayCalc = executarCalculo(
-          this.numero1,
-          this.numero2,
-          this.operador
-        );
+        this.displayCalc = calculate(this.numero1, this.numero2, this.operador);
         this.numero1 = this.displayCalc;
         this.zerarGlobais();
       }
@@ -128,11 +135,7 @@ class Calculadora {
     } else if (this.numero2 === "" && this.displayCalc !== "") {
       this.numero2 = parseInt(this.displayCalc, 10);
       if (this.numero1 !== "" && this.numero2 !== "" && this.operador !== "") {
-        this.displayCalc = executarCalculo(
-          this.numero1,
-          this.numero2,
-          this.operador
-        );
+        this.displayCalc = calculate(this.numero1, this.numero2, this.operador);
 
         this.atualizarUI(this.displayCalc);
         this.numero1 = this.displayCalc;
@@ -144,11 +147,11 @@ class Calculadora {
   };
 
   incluirEventos = () => {
-    // EVENTO: BOTOES DE NUEMRO
+    // EVENTO: BOTOES NUMERICOS
     this.botoesNumericos.forEach((button) =>
       button.addEventListener("click", (event) => {
         const buttonThatGotClicked = event.currentTarget;
-        this.aoClicarBotaoNumeric(buttonThatGotClicked.textContent); // NOVO JEITO DO DECO
+        this.aoClicarBotaoNumeric(buttonThatGotClicked.textContent);
       })
     );
     // EVENTO BOTOES DE OPERACOES
@@ -173,7 +176,7 @@ class Calculadora {
       let especialRegex = /[/=]/;
       console.log(ev.key);
       if (digitRegex.test(ev.key)) {
-        this.aoClicarBotaoNumeric(ev.key); // NOVO JEITO DO DECO
+        this.aoClicarBotaoNumeric(ev.key);
       } else if (operationRegex.test(ev.key)) {
         this.aoClicarBotaoOperacao(ev.key);
       } else if (especialRegex.test(ev.key) || ev.key === "Enter") {
